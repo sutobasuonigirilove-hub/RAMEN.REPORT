@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ラーメン取材メモ">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="ラーメン取材メモ">
+  <meta name="theme-color" content="#f7f1e6">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" sizes="32x32">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>ラーメン取材メモ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #fffdf8;
+      --paper-2: #f7f1e6;
+      --ink: #25201b;
+      --muted: #746b5f;
+      --line: #ded2bf;
+      --soft: #eee4d4;
+      --accent: #b73a24;
+      --accent-2: #236a64;
+      --gold: #c28a2c;
+      --shadow: 0 18px 52px rgba(60, 43, 27, .16);
+      --radius: 8px;
+      --tap: 48px;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--paper-2);
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(183, 58, 36, .08) 0 1px, transparent 1px 100%),
+        linear-gradient(0deg, rgba(35, 106, 100, .06) 0 1px, transparent 1px 100%),
+        var(--paper-2);
+      background-size: 32px 32px;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      min-height: var(--tap);
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 0 18px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 48px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      min-height: 30px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      box-shadow: 0 0 0 4px rgba(35, 106, 100, .14);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sheet,
+    .side {
+      background: rgba(255, 253, 248, .94);
+      border: 1px solid rgba(128, 101, 69, .22);
+      box-shadow: var(--shadow);
+    }
+
+    .sheet {
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 18px;
+      border-top: 1px solid var(--soft);
+    }
+
+    .section:first-child {
+      border-top: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fffdfa;
+      color: var(--ink);
+      outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    input {
+      min-height: 52px;
+      padding: 0 14px;
+    }
+
+    textarea {
+      min-height: 210px;
+      resize: vertical;
+      padding: 14px;
+      line-height: 1.75;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: rgba(183, 58, 36, .74);
+      box-shadow: 0 0 0 4px rgba(183, 58, 36, .12);
+      background: #fff;
+    }
+
+    .address-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: var(--radius);
+      padding: 0 15px;
+      color: var(--ink);
+      background: var(--soft);
+      font-weight: 850;
+      line-height: 1;
+      transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.primary {
+      color: #fffaf0;
+      background: var(--accent);
+      box-shadow: 0 10px 24px rgba(183, 58, 36, .24);
+    }
+
+    .btn.green {
+      color: #f8fffb;
+      background: var(--accent-2);
+      box-shadow: 0 10px 24px rgba(35, 106, 100, .2);
+    }
+
+    .btn.gold {
+      color: #211708;
+      background: #e2b75d;
+    }
+
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+    }
+
+    .btn.small {
+      min-height: 38px;
+      padding: 0 11px;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .canvas-wrap {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fffdfa;
+    }
+
+    .canvas-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px;
+      border-bottom: 1px solid var(--soft);
+      background: #fbf4e9;
+    }
+
+    .tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 1px var(--line);
+      padding: 0;
+    }
+
+    .swatch.active {
+      box-shadow: 0 0 0 3px rgba(183, 58, 36, .35);
+    }
+
+    .pen-size {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 108px;
+      min-height: auto;
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 360px;
+      background:
+        linear-gradient(#fffaf0 31px, rgba(194, 138, 44, .18) 32px),
+        #fffdfa;
+      background-size: 100% 32px;
+      touch-action: none;
+    }
+
+    .side {
+      position: sticky;
+      top: 16px;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .side-header {
+      padding: 14px;
+      background: #2c2822;
+      color: #fffaf0;
+    }
+
+    .side-header h2 {
+      font-size: 16px;
+    }
+
+    .side-body {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .memo-list {
+      display: grid;
+      gap: 8px;
+      max-height: 45vh;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .memo-item {
+      display: grid;
+      gap: 5px;
+      text-align: left;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: #fffdfa;
+      color: var(--ink);
+    }
+
+    .memo-item.active {
+      border-color: var(--accent);
+      box-shadow: inset 4px 0 0 var(--accent);
+    }
+
+    .memo-title {
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .memo-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .empty {
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      line-height: 1.7;
+      background: rgba(255, 255, 255, .42);
+    }
+
+    .report {
+      display: none;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(20px);
+      max-width: min(520px, calc(100vw - 28px));
+      padding: 12px 15px;
+      border-radius: 999px;
+      color: #fffaf0;
+      background: rgba(37, 32, 27, .94);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, .2);
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+      }
+
+      .memo-list {
+        max-height: 240px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        display: grid;
+      }
+
+      .status {
+        white-space: normal;
+      }
+
+      .grid,
+      .address-row {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-toolbar {
+        align-items: stretch;
+        display: grid;
+      }
+
+      canvas {
+        height: 300px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .btn.small,
+      .tools .btn {
+        width: auto;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 14mm;
+      }
+
+      html,
+      body {
+        background: #fff;
+      }
+
+      .app,
+      .toast {
+        display: none !important;
+      }
+
+      .report {
+        display: block;
+        color: #1d1a16;
+        font-family: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      }
+
+      .report-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #1d1a16;
+      }
+
+      .report-title h1 {
+        font-size: 28px;
+      }
+
+      .report-date {
+        text-align: right;
+        font-size: 12px;
+        color: #555;
+      }
+
+      .report-grid {
+        display: grid;
+        grid-template-columns: 22mm 1fr;
+        gap: 8px 12px;
+        margin: 16px 0;
+        font-size: 13px;
+      }
+
+      .report-label {
+        color: #666;
+        font-weight: 800;
+      }
+
+      .report-box {
+        border: 1px solid #cfc8bc;
+        min-height: 84mm;
+        padding: 9px;
+        white-space: pre-wrap;
+        line-height: 1.75;
+      }
+
+      .report-hand {
+        margin-top: 12px;
+        page-break-inside: avoid;
+      }
+
+      .report-hand h2 {
+        font-size: 15px;
+        margin: 0 0 8px;
+      }
+
+      .report-hand img {
+        width: 100%;
+        max-height: 95mm;
+        object-fit: contain;
+        border: 1px solid #cfc8bc;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="eyebrow">RAMEN FIELD NOTE</div>
+        <h1>ラーメン取材メモ</h1>
+      </div>
+      <div class="status" aria-live="polite"><span class="dot"></span><span id="saveStatus">未保存</span></div>
+    </header>
+
+    <div class="layout">
+      <article class="sheet">
+        <section class="section">
+          <div class="section-head">
+            <h2>基本情報</h2>
+            <div class="actions">
+              <button class="btn small ghost" type="button" id="newBtn">新規</button>
+              <button class="btn small primary" type="button" id="saveBtn">保存</button>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="shopName">店名</label>
+              <input id="shopName" autocomplete="organization" placeholder="例：麺屋 取材堂">
+            </div>
+
+            <div class="field">
+              <label for="visitedAt">取材日</label>
+              <input id="visitedAt" type="date">
+            </div>
+
+            <div class="field full">
+              <label for="address">住所</label>
+              <div class="address-row">
+                <input id="address" autocomplete="street-address" placeholder="住所を入力、または現在地から自動入力">
+                <button class="btn green" type="button" id="locateBtn">現在地入力</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>TXT入力</h2>
+            <button class="btn small gold" type="button" id="templateBtn">項目を追加</button>
+          </div>
+          <div class="field">
+            <label for="textMemo">味・麺・スープ・具材・接客・撮影メモ</label>
+            <textarea id="textMemo" placeholder="スープ：&#10;麺：&#10;具材：&#10;店内：&#10;一言コメント："></textarea>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2>てがきにゅうりょく</h2>
+            <button class="btn small ghost" type="button" id="clearCanvasBtn">消去</button>
+          </div>
+          <div class="canvas-wrap">
+            <div class="canvas-toolbar">
+              <div class="tools" aria-label="ペン色">
+                <button class="swatch active" type="button" data-color="#25201b" style="background:#25201b" aria-label="黒"></button>
+                <button class="swatch" type="button" data-color="#b73a24" style="background:#b73a24" aria-label="赤"></button>
+                <button class="swatch" type="button" data-color="#236a64" style="background:#236a64" aria-label="緑"></button>
+              </div>
+              <label class="pen-size" for="penSize">太さ <input id="penSize" type="range" min="2" max="18" value="5"></label>
+            </div>
+            <canvas id="drawCanvas" aria-label="手書きメモ欄"></canvas>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="actions">
+            <button class="btn primary" type="button" id="pdfBtn">PDFレポート</button>
+            <button class="btn ghost" type="button" id="exportBtn">JSON書き出し</button>
+            <button class="btn ghost" type="button" id="importBtn">JSON読み込み</button>
+            <input id="importFile" type="file" accept="application/json" hidden>
+          </div>
+        </section>
+      </article>
+
+      <aside class="side" aria-label="保存済みメモ">
+        <div class="side-header">
+          <h2>ローカル保存</h2>
+        </div>
+        <div class="side-body">
+          <div class="actions">
+            <button class="btn small green" type="button" id="duplicateBtn">複製</button>
+            <button class="btn small ghost" type="button" id="deleteBtn">削除</button>
+          </div>
+          <div class="memo-list" id="memoList"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <section class="report" aria-hidden="true">
+    <div class="report-title">
+      <h1 id="reportShop">ラーメン取材レポート</h1>
+      <div class="report-date" id="reportDate"></div>
+    </div>
+    <div class="report-grid">
+      <div class="report-label">店名</div>
+      <div id="reportName"></div>
+      <div class="report-label">住所</div>
+      <div id="reportAddress"></div>
+      <div class="report-label">取材日</div>
+      <div id="reportVisited"></div>
+    </div>
+    <div class="report-box" id="reportMemo"></div>
+    <div class="report-hand">
+      <h2>手書きメモ</h2>
+      <img id="reportImage" alt="手書きメモ">
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "ramen-field-notes-v1";
+      const $ = (id) => document.getElementById(id);
+      const elements = {
+        shopName: $("shopName"),
+        visitedAt: $("visitedAt"),
+        address: $("address"),
+        textMemo: $("textMemo"),
+        canvas: $("drawCanvas"),
+        memoList: $("memoList"),
+        saveStatus: $("saveStatus"),
+        toast: $("toast")
+      };
+
+      const ctx = elements.canvas.getContext("2d");
+      let notes = [];
+      let currentId = "";
+      let penColor = "#25201b";
+      let penSize = 5;
+      let drawing = false;
+      let lastPoint = null;
+      let autosaveTimer = 0;
+      let ignoreMouseUntil = 0;
+      const canvasImageType = "image/jpeg";
+      const canvasImageQuality = 0.7;
+
+      function today() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function uid() {
+        return "note-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+      }
+
+      function showToast(message) {
+        elements.toast.textContent = message;
+        elements.toast.classList.add("show");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => elements.toast.classList.remove("show"), 2200);
+      }
+
+      function setStatus(message) {
+        elements.saveStatus.textContent = message;
+      }
+
+      function loadNotes() {
+        try {
+          notes = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          if (!Array.isArray(notes)) notes = [];
+        } catch {
+          notes = [];
+        }
+      }
+
+      function persistNotes() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+        } catch {
+          showToast("保存容量が不足している可能性があります");
+        }
+      }
+
+      function getFormData() {
+        return {
+          id: currentId || uid(),
+          shopName: elements.shopName.value.trim(),
+          visitedAt: elements.visitedAt.value,
+          address: elements.address.value.trim(),
+          textMemo: elements.textMemo.value,
+          drawing: canvasDataUrl(),
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      function applyFormData(note) {
+        currentId = note.id;
+        elements.shopName.value = note.shopName || "";
+        elements.visitedAt.value = note.visitedAt || today();
+        elements.address.value = note.address || "";
+        elements.textMemo.value = note.textMemo || "";
+        clearCanvas(false);
+        if (note.drawing) {
+          const image = new Image();
+          image.onload = () => {
+            drawImageToCanvas(image);
+          };
+          image.src = note.drawing;
+        }
+        renderList();
+        setStatus("読み込み済み");
+      }
+
+      function saveCurrent({ silent = false } = {}) {
+        const data = getFormData();
+        currentId = data.id;
+        const index = notes.findIndex((note) => note.id === currentId);
+        if (index >= 0) notes[index] = data;
+        else notes.unshift(data);
+        notes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        persistNotes();
+        renderList();
+        setStatus("保存済み " + new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }));
+        if (!silent) showToast("このiPad内に保存しました");
+      }
+
+      function scheduleAutosave() {
+        setStatus("編集中");
+        window.clearTimeout(autosaveTimer);
+        autosaveTimer = window.setTimeout(() => saveCurrent({ silent: true }), 900);
+      }
+
+      function newNote() {
+        currentId = uid();
+        elements.shopName.value = "";
+        elements.visitedAt.value = today();
+        elements.address.value = "";
+        elements.textMemo.value = "";
+        clearCanvas(false);
+        renderList();
+        setStatus("新規メモ");
+        showToast("新しいメモを作成しました");
+      }
+
+      function deleteCurrent() {
+        if (!currentId) return;
+        const note = notes.find((item) => item.id === currentId);
+        const title = note?.shopName || "このメモ";
+        if (!confirm(title + "を削除しますか？")) return;
+        notes = notes.filter((item) => item.id !== currentId);
+        persistNotes();
+        if (notes.length) applyFormData(notes[0]);
+        else newNote();
+        showToast("削除しました");
+      }
+
+      function duplicateCurrent() {
+        const data = getFormData();
+        data.id = uid();
+        data.shopName = data.shopName ? data.shopName + " コピー" : "無題メモ コピー";
+        data.updatedAt = new Date().toISOString();
+        notes.unshift(data);
+        persistNotes();
+        applyFormData(data);
+        showToast("複製しました");
+      }
+
+      function renderList() {
+        elements.memoList.innerHTML = "";
+        if (!notes.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "保存したメモはここに表示されます。";
+          elements.memoList.append(empty);
+          return;
+        }
+
+        for (const note of notes) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "memo-item" + (note.id === currentId ? " active" : "");
+          button.innerHTML = `
+            <span class="memo-title"></span>
+            <span class="memo-meta"></span>
+          `;
+          button.querySelector(".memo-title").textContent = note.shopName || "無題メモ";
+          const updated = new Date(note.updatedAt).toLocaleString("ja-JP", {
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+          button.querySelector(".memo-meta").textContent = `${note.visitedAt || "日付なし"} / ${updated}`;
+          button.addEventListener("click", () => {
+            saveCurrent({ silent: true });
+            applyFormData(note);
+          });
+          elements.memoList.append(button);
+        }
+      }
+
+      function resizeCanvas() {
+        const previous = elements.canvas.width ? canvasDataUrl() : "";
+        const rect = elements.canvas.getBoundingClientRect();
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        elements.canvas.width = Math.round(rect.width * ratio);
+        elements.canvas.height = Math.round(rect.height * ratio);
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        if (previous) {
+          const image = new Image();
+          image.onload = () => drawImageToCanvas(image);
+          image.src = previous;
+        }
+      }
+
+      function drawImageToCanvas(image) {
+        const rect = elements.canvas.getBoundingClientRect();
+        ctx.drawImage(image, 0, 0, rect.width, rect.height);
+      }
+
+      function canvasDataUrl() {
+        try {
+          const rect = elements.canvas.getBoundingClientRect();
+          const exportCanvas = document.createElement("canvas");
+          const exportContext = exportCanvas.getContext("2d");
+          exportCanvas.width = Math.max(1, Math.round(rect.width));
+          exportCanvas.height = Math.max(1, Math.round(rect.height));
+          exportContext.fillStyle = "#fffdfa";
+          exportContext.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+          exportContext.drawImage(elements.canvas, 0, 0, exportCanvas.width, exportCanvas.height);
+          return exportCanvas.toDataURL(canvasImageType, canvasImageQuality);
+        } catch (error) {
+          console.error(error);
+          return "";
+        }
+      }
+
+      function canvasPoint(event) {
+        const rect = elements.canvas.getBoundingClientRect();
+        const source = event.touches?.[0] || event.changedTouches?.[0] || event;
+        if (source.clientX == null || source.clientY == null) {
+          throw new Error("Canvas input coordinates are unavailable.");
+        }
+        return {
+          x: source.clientX - rect.left,
+          y: source.clientY - rect.top
+        };
+      }
+
+      function preventCanvasGesture(event) {
+        if (event.cancelable) event.preventDefault();
+      }
+
+      function shouldIgnoreSyntheticMouse(event) {
+        return event.type.startsWith("mouse") && Date.now() < ignoreMouseUntil;
+      }
+
+      function startDrawing(event) {
+        if (shouldIgnoreSyntheticMouse(event)) return;
+        preventCanvasGesture(event);
+        if (event.type.startsWith("touch")) ignoreMouseUntil = Date.now() + 800;
+        drawing = true;
+        lastPoint = canvasPoint(event);
+
+        try {
+          if (elements.canvas.setPointerCapture && event.pointerId != null) {
+            elements.canvas.setPointerCapture(event.pointerId);
+          }
+        } catch {}
+      }
+
+      function draw(event) {
+        if (shouldIgnoreSyntheticMouse(event)) return;
+        if (!drawing || !lastPoint) return;
+        preventCanvasGesture(event);
+        const point = canvasPoint(event);
+        ctx.strokeStyle = penColor;
+        ctx.lineWidth = penSize;
+        ctx.beginPath();
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+        lastPoint = point;
+      }
+
+      function stopDrawing(event) {
+        if (shouldIgnoreSyntheticMouse(event)) return;
+        if (!drawing) return;
+        preventCanvasGesture(event);
+        drawing = false;
+        lastPoint = null;
+        try {
+          if (elements.canvas.releasePointerCapture && event.pointerId != null) {
+            elements.canvas.releasePointerCapture(event.pointerId);
+          }
+        } catch {}
+        scheduleAutosave();
+      }
+
+      function cancelDrawing(event) {
+        if (!drawing) return;
+        preventCanvasGesture(event);
+        drawing = false;
+        lastPoint = null;
+        scheduleAutosave();
+      }
+
+      function safeCanvasHandler(handler) {
+        return (event) => {
+          try {
+            handler(event);
+          } catch (error) {
+            console.error(error);
+            drawing = false;
+            lastPoint = null;
+            setStatus("手書き入力をリセット");
+          }
+        };
+      }
+
+      function clearCanvas(announce = true) {
+        const rect = elements.canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        if (announce) {
+          scheduleAutosave();
+          showToast("手書き欄を消去しました");
+        }
+      }
+
+      async function autoAddress() {
+        if (!navigator.geolocation) {
+          showToast("このブラウザでは現在地を取得できません");
+          return;
+        }
+
+        $("locateBtn").disabled = true;
+        $("locateBtn").textContent = "取得中";
+        setStatus("現在地を取得中");
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+          const fallback = `緯度 ${latitude.toFixed(6)}, 経度 ${longitude.toFixed(6)}`;
+          try {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&accept-language=ja`;
+            const response = await fetch(url, { headers: { "Accept": "application/json" } });
+            if (!response.ok) throw new Error("reverse geocode failed");
+            const json = await response.json();
+            elements.address.value = json.display_name || fallback;
+            showToast("住所を自動入力しました");
+          } catch {
+            elements.address.value = fallback;
+            showToast("住所変換に失敗したため座標を入力しました");
+          } finally {
+            $("locateBtn").disabled = false;
+            $("locateBtn").textContent = "現在地入力";
+            scheduleAutosave();
+          }
+        }, () => {
+          $("locateBtn").disabled = false;
+          $("locateBtn").textContent = "現在地入力";
+          showToast("位置情報の許可が必要です");
+          setStatus("位置情報未許可");
+        }, {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 60000
+        });
+      }
+
+      function addTemplate() {
+        const template = [
+          "",
+          "スープ：",
+          "麺：",
+          "具材：",
+          "香り：",
+          "温度：",
+          "店内・接客：",
+          "撮影カット：",
+          "記事用の一言："
+        ].join("\n");
+        elements.textMemo.value += template;
+        elements.textMemo.focus();
+        scheduleAutosave();
+      }
+
+      function updateReport() {
+        const data = getFormData();
+        $("reportShop").textContent = data.shopName ? data.shopName + " 取材レポート" : "ラーメン取材レポート";
+        $("reportDate").textContent = "出力日時 " + new Date().toLocaleString("ja-JP");
+        $("reportName").textContent = data.shopName || "未入力";
+        $("reportAddress").textContent = data.address || "未入力";
+        $("reportVisited").textContent = data.visitedAt || "未入力";
+        $("reportMemo").textContent = data.textMemo || "メモ未入力";
+        $("reportImage").src = data.drawing;
+      }
+
+      function printPdf() {
+        saveCurrent({ silent: true });
+        updateReport();
+        window.setTimeout(() => window.print(), 500);
+      }
+
+      function exportJson() {
+        saveCurrent({ silent: true });
+        const blob = new Blob([JSON.stringify(notes, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ramen-field-notes.json";
+        a.style.display = "none";
+        document.body.append(a);
+        a.click();
+        window.setTimeout(() => {
+          URL.revokeObjectURL(url);
+          a.remove();
+        }, 1000);
+        showToast("JSONを書き出しました");
+      }
+
+      function importJson(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const imported = JSON.parse(reader.result);
+            if (!Array.isArray(imported)) throw new Error("invalid");
+            const normalized = imported
+              .filter((item) => item && typeof item === "object")
+              .map((item) => ({ ...item, id: item.id || uid(), updatedAt: item.updatedAt || new Date().toISOString() }));
+            notes = normalized.concat(notes);
+            persistNotes();
+            renderList();
+            if (normalized[0]) applyFormData(normalized[0]);
+            showToast("JSONを読み込みました");
+          } catch {
+            showToast("読み込めないJSONです");
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function bindEvents() {
+        ["input", "change"].forEach((eventName) => {
+          elements.shopName.addEventListener(eventName, scheduleAutosave);
+          elements.visitedAt.addEventListener(eventName, scheduleAutosave);
+          elements.address.addEventListener(eventName, scheduleAutosave);
+          elements.textMemo.addEventListener(eventName, scheduleAutosave);
+        });
+
+        $("saveBtn").addEventListener("click", () => saveCurrent());
+        $("newBtn").addEventListener("click", newNote);
+        $("deleteBtn").addEventListener("click", deleteCurrent);
+        $("duplicateBtn").addEventListener("click", duplicateCurrent);
+        $("locateBtn").addEventListener("click", autoAddress);
+        $("templateBtn").addEventListener("click", addTemplate);
+        $("clearCanvasBtn").addEventListener("click", () => clearCanvas(true));
+        $("pdfBtn").addEventListener("click", printPdf);
+        $("exportBtn").addEventListener("click", exportJson);
+        $("importBtn").addEventListener("click", () => $("importFile").click());
+        $("importFile").addEventListener("change", (event) => importJson(event.target.files[0]));
+
+        const canvasOptions = { passive: false };
+        const safeStartDrawing = safeCanvasHandler(startDrawing);
+        const safeDraw = safeCanvasHandler(draw);
+        const safeStopDrawing = safeCanvasHandler(stopDrawing);
+        const safeCancelDrawing = safeCanvasHandler(cancelDrawing);
+
+        elements.canvas.addEventListener("touchstart", safeStartDrawing, canvasOptions);
+        elements.canvas.addEventListener("touchmove", safeDraw, canvasOptions);
+        elements.canvas.addEventListener("touchend", safeStopDrawing, canvasOptions);
+        elements.canvas.addEventListener("touchcancel", safeCancelDrawing, canvasOptions);
+        elements.canvas.addEventListener("mousedown", safeStartDrawing);
+        elements.canvas.addEventListener("mousemove", safeDraw);
+        elements.canvas.addEventListener("mouseup", safeStopDrawing);
+        elements.canvas.addEventListener("mouseleave", safeCancelDrawing);
+
+        const isAppleTouchWebKit = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+          (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+        if (window.PointerEvent && !isAppleTouchWebKit) {
+          elements.canvas.addEventListener("pointerdown", safeStartDrawing, canvasOptions);
+          elements.canvas.addEventListener("pointermove", safeDraw, canvasOptions);
+          elements.canvas.addEventListener("pointerup", safeStopDrawing, canvasOptions);
+          elements.canvas.addEventListener("pointercancel", safeCancelDrawing, canvasOptions);
+          elements.canvas.addEventListener("pointerleave", safeCancelDrawing, canvasOptions);
+        }
+
+        $("penSize").addEventListener("input", (event) => {
+          penSize = Number(event.target.value);
+        });
+
+        document.querySelectorAll(".swatch").forEach((button) => {
+          button.addEventListener("click", () => {
+            document.querySelectorAll(".swatch").forEach((item) => item.classList.remove("active"));
+            button.classList.add("active");
+            penColor = button.dataset.color;
+          });
+        });
+
+        window.addEventListener("resize", () => {
+          window.clearTimeout(resizeCanvas.timer);
+          resizeCanvas.timer = window.setTimeout(resizeCanvas, 160);
+        });
+
+        window.addEventListener("beforeunload", () => saveCurrent({ silent: true }));
+      }
+
+      function init() {
+        elements.visitedAt.value = today();
+        resizeCanvas();
+        loadNotes();
+        bindEvents();
+        if (notes.length) applyFormData(notes[0]);
+        else newNote();
+      }
+
+      init();
+
+      if ("serviceWorker" in navigator && location.protocol !== "file:") {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch((error) => {
+            console.error(error);
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
