@@ -1,0 +1,26 @@
+{
+  "name": "ラーメン取材メモ",
+  "short_name": "取材メモ",
+  "description": "iPad対応のラーメン取材メモ。店名、住所、TXT入力、手書き、ローカル保存、PDFレポートに対応。",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f1e6",
+  "theme_color": "#f7f1e6",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon",
+      "purpose": "any"
+    }
+  ]
+}
